@@ -74,18 +74,38 @@ def fetch(url: str) -> str:
         raise SyncError(f"Could not fetch {url}: {e}")
 
 
+def to_absolute(href: str, current_url: str) -> str:
+    if href.startswith("http"):
+        return href
+    base = re.match(r"^(https?://[^/]+)", current_url).group(1)
+    if href.startswith("/"):
+        return base + href
+    return base + "/" + href
+
+
 def find_next_page_url(soup, current_url: str):
+    """Handles a plain 'Next' link, if the site uses one."""
     next_link = soup.find("a", attrs={"rel": "next"})
     if not next_link:
         next_link = soup.find("a", string=re.compile(r"^\s*Next\s*$", re.I))
     if next_link and next_link.get("href"):
-        href = next_link["href"]
-        if href.startswith("http"):
-            return href
-        if href.startswith("/"):
-            base = re.match(r"^(https?://[^/]+)", current_url).group(1)
-            return base + href
+        return to_absolute(next_link["href"], current_url)
     return None
+
+
+def find_numbered_pagination_urls(soup, current_url: str) -> list:
+    """Handles numbered pagination (e.g. '1 2 3 4') instead of a 'Next'
+    link — collects every page-number link found on the page so all
+    pages get visited even if there's no explicit 'Next' button."""
+    urls = []
+    for link in soup.find_all("a", href=True):
+        text = link.get_text(strip=True)
+        href = link["href"]
+        looks_like_page_number = text.isdigit()
+        looks_like_page_param = re.search(r"[?&](page|pg)=\d+", href, re.I) or re.search(r"/page/\d+", href, re.I)
+        if looks_like_page_number or looks_like_page_param:
+            urls.append(to_absolute(href, current_url))
+    return urls
 
 
 def extract_price(text: str) -> str:
@@ -146,26 +166,31 @@ def parse_year_make_model(title: str):
 
 
 def fetch_all_listings() -> list:
-    vehicles = []
+    all_vehicles = {}
     seen_urls = set()
-    url = SOURCE_LISTING_URL
+    to_visit = [SOURCE_LISTING_URL]
 
-    for _ in range(MAX_PAGES):
+    while to_visit and len(seen_urls) < MAX_PAGES:
+        url = to_visit.pop(0)
         if url in seen_urls:
-            break
+            continue
         seen_urls.add(url)
 
         page_html = fetch(url)
         soup = BeautifulSoup(page_html, "html.parser")
-        page_vehicles = parse_listing_page(page_html)
-        vehicles.extend(page_vehicles)
+
+        for v in parse_listing_page(page_html):
+            all_vehicles[v["stock_number"]] = v
 
         next_url = find_next_page_url(soup, url)
-        if not next_url:
-            break
-        url = next_url
+        if next_url and next_url not in seen_urls:
+            to_visit.append(next_url)
 
-    return vehicles
+        for page_url in find_numbered_pagination_urls(soup, url):
+            if page_url not in seen_urls and page_url not in to_visit:
+                to_visit.append(page_url)
+
+    return list(all_vehicles.values())
 
 
 def validate_vehicles(vehicles: list) -> None:
