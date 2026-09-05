@@ -45,10 +45,7 @@ except ImportError:
 # CONFIG
 # ---------------------------------------------------------------------------
 
-SOURCE_LISTING_URL = os.environ.get(
-    "SOURCE_LISTING_URL",
-    "https://www.inandoutautosaleswa.com/cars-for-sale",
-)
+SOURCE_LISTING_URL = os.environ.get("SOURCE_LISTING_URL") or "https://www.inandoutautosaleswa.com/cars-for-sale"
 USER_AGENT = "Mozilla/5.0 (compatible; INnOutSiteSync/1.0; +https://inandoutautosaleswa.com)"
 MAX_PAGES = 20  # safety cap against a pagination loop
 REQUEST_TIMEOUT = 30
