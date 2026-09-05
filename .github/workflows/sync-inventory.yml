@@ -1,0 +1,68 @@
+name: Sync Inventory from Current Website
+
+# Runs automatically every 4 hours, and lets you trigger it manually
+# from the GitHub "Actions" tab any time (e.g. right after adding a car
+# to the current site).
+on:
+  schedule:
+    - cron: "0 */4 * * *"
+  workflow_dispatch: {}
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the site
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install beautifulsoup4
+
+      - name: Run inventory sync
+        env:
+          # Optional override — defaults to the current live site's
+          # /cars-for-sale listing page if not set.
+          SOURCE_LISTING_URL: ${{ vars.SOURCE_LISTING_URL }}
+        run: python scripts/sync_inventory.py
+
+      - name: Commit updated inventory (if changed)
+        run: |
+          git config user.name "inventory-sync-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add inventory.html scripts/last-sync.json
+          git diff --quiet --cached || git commit -m "Auto-sync inventory from current site"
+          git push
+
+# ---------------------------------------------------------------------------
+# HOW THIS WORKS:
+#
+# Carsforsale.com will only push inventory feeds to recognized third-party
+# marketplaces (CarGurus, AutoTrader, etc.) — not to an independent custom
+# website. So instead of waiting on a feed, this script reads the vehicle
+# listings straight from the dealer's own current public website
+# (inandoutautosaleswa.com/cars-for-sale), which is publicly visible
+# information about their own inventory, and rebuilds inventory.html here.
+#
+# HOW ALERTING WORKS (no extra service needed):
+#
+# If the "Run inventory sync" step fails (site unreachable, its page
+# structure changed, suspiciously few vehicles found), this workflow run
+# is marked "Failed" and GitHub automatically emails the repository owner.
+# This is a built-in GitHub feature — nothing extra to configure, beyond
+# making sure it's turned on:
+#   GitHub.com -> profile photo -> Settings -> Notifications -> Actions
+#   -> enable email notifications for failed workflows.
+#
+# Netlify auto-redeploys any time this workflow pushes a change to
+# inventory.html, since Netlify watches the repo for commits.
+#
+# RISK WORTH KNOWING: if inandoutautosaleswa.com's current template ever
+# changes (a redesign on Carsforsale's end), the parsing logic in
+# scripts/sync_inventory.py may need updating. The script is written to
+# fail loudly rather than publish something broken if that happens.
+# ---------------------------------------------------------------------------
