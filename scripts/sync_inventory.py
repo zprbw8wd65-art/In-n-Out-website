@@ -293,4 +293,13 @@ def main():
     validate_vehicles(vehicles)
     rebuild_inventory_page(vehicles)
     write_sync_log(len(vehicles), "success")
-    print(f"Synced {len(vehicles)} vehicles successfully from {len(SOURCE_LISTING_UR
+    print(f"Synced {len(vehicles)} vehicles successfully from {len(SOURCE_LISTING_URLS)} category pages.")
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except SyncError as e:
+        write_sync_log(0, f"failed: {e}")
+        print(f"SYNC FAILED: {e}", file=sys.stderr)
+        sys.exit(1)
