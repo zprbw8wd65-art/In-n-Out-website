@@ -1,14 +1,24 @@
 #!/usr/bin/env python3
 """
-IN-n-OUT Auto Sales — Inventory Sync Script (v2: scrape-based)
-================================================================
+IN-n-OUT Auto Sales — Inventory Sync Script (v3: category-page based)
+=======================================================================
 Carsforsale.com told the dealer they can only syndicate feeds to
-recognized third-party marketplaces (CarGurus, AutoTrader, etc.) —
-not to an independent custom website. So instead, this script reads
-the inventory straight from the dealer's own CURRENT public website
-(https://www.inandoutautosaleswa.com), which is public information
-about their own vehicles, and uses it to rebuild:
+recognized third-party marketplaces (CarGurus, AutoTrader, etc.) — not
+to an independent custom website. So this script reads inventory
+straight from the dealer's own CURRENT public website
+(inandoutautosaleswa.com), which is public information about their
+own vehicles.
 
+The site's main /cars-for-sale listing loads extra vehicles via a
+"Load More" button (JavaScript) — a plain page fetch can't see or
+trigger that, so it only ever saw the first ~24 of 34 vehicles. Its
+sitemap showed the full inventory is also reachable as 7 body-style
+category pages (sedan, SUVs, pickup trucks, wagon, full size,
+minivans, chassis), each small enough to render in full without
+"Load More" kicking in. This script visits all 7 and merges the
+results, which covers the whole lot.
+
+Rebuilds:
   - inventory.html   (the vehicle grid, with filters)
   - vehicle-<stock#>.html  (one detail page per vehicle)
 
@@ -17,13 +27,11 @@ Designed to run on a schedule via GitHub Actions
 site unreachable, page structure changed, suspiciously few vehicles
 found — it fails LOUDLY (raises an exception) rather than silently
 publishing something broken. A failed GitHub Actions run automatically
-emails the repo owner (see notes in the workflow file).
+emails the repo owner.
 
-STATUS: This is a working scaffold built from the current site's
-observed structure. The exact CSS patterns (SOURCE_LISTING_URL parsing
-in particular) should be spot-checked against a real run once this is
-deployed to GitHub Actions — this sandbox has no internet access to
-test live HTTP requests against the real site.
+STATUS: Working scaffold built from the site's observed structure.
+This sandbox has no internet access to test live HTTP requests, so
+double-check scripts/last-sync.json's vehicle_count after a real run.
 """
 
 import os
@@ -45,9 +53,20 @@ except ImportError:
 # CONFIG
 # ---------------------------------------------------------------------------
 
-SOURCE_LISTING_URL = os.environ.get("SOURCE_LISTING_URL") or "https://www.inandoutautosaleswa.com/cars-for-sale"
+SOURCE_LISTING_URLS = [
+    u.strip() for u in os.environ.get("SOURCE_LISTING_URLS", "").split(",") if u.strip()
+] or [
+    "https://www.inandoutautosaleswa.com/sedan-for-sale-b100033",
+    "https://www.inandoutautosaleswa.com/suvs-for-sale-b100037",
+    "https://www.inandoutautosaleswa.com/pickup-trucks-for-sale-b100030",
+    "https://www.inandoutautosaleswa.com/wagon-for-sale-b100040",
+    "https://www.inandoutautosaleswa.com/full-size-for-sale-b100043",
+    "https://www.inandoutautosaleswa.com/minivans-for-sale-b100024",
+    "https://www.inandoutautosaleswa.com/chassis-for-sale-b100006",
+]
+
 USER_AGENT = "Mozilla/5.0 (compatible; INnOutSiteSync/1.0; +https://inandoutautosaleswa.com)"
-MAX_PAGES = 20  # safety cap against a pagination loop
+MAX_PAGES = 30  # safety cap across all sources combined
 REQUEST_TIMEOUT = 30
 
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "..")
@@ -84,7 +103,8 @@ def to_absolute(href: str, current_url: str) -> str:
 
 
 def find_next_page_url(soup, current_url: str):
-    """Handles a plain 'Next' link, if the site uses one."""
+    """Handles a plain 'Next' link, in case a category page is ever
+    large enough to paginate on its own."""
     next_link = soup.find("a", attrs={"rel": "next"})
     if not next_link:
         next_link = soup.find("a", string=re.compile(r"^\s*Next\s*$", re.I))
@@ -94,9 +114,7 @@ def find_next_page_url(soup, current_url: str):
 
 
 def find_numbered_pagination_urls(soup, current_url: str) -> list:
-    """Handles numbered pagination (e.g. '1 2 3 4') instead of a 'Next'
-    link — collects every page-number link found on the page so all
-    pages get visited even if there's no explicit 'Next' button."""
+    """Handles numbered pagination (e.g. '1 2 3 4'), same reasoning."""
     urls = []
     for link in soup.find_all("a", href=True):
         text = link.get_text(strip=True)
@@ -120,7 +138,7 @@ def extract_mileage(text: str) -> str:
     return m.group(1).replace(",", "") if m else ""
 
 
-def parse_listing_page(html_text: str) -> list:
+def parse_listing_page(html_text: str, page_url: str) -> list:
     soup = BeautifulSoup(html_text, "html.parser")
     vehicles = {}
 
@@ -147,8 +165,7 @@ def parse_listing_page(html_text: str) -> list:
 
         vehicles[stock_number] = {
             "stock_number": stock_number,
-            "detail_url": href if href.startswith("http") else
-                          re.match(r"^(https?://[^/]+)", SOURCE_LISTING_URL).group(1) + href,
+            "detail_url": to_absolute(href, page_url),
             "title": title,
             "price": extract_price(container_text),
             "mileage": extract_mileage(container_text),
@@ -168,7 +185,7 @@ def parse_year_make_model(title: str):
 def fetch_all_listings() -> list:
     all_vehicles = {}
     seen_urls = set()
-    to_visit = [SOURCE_LISTING_URL]
+    to_visit = list(SOURCE_LISTING_URLS)
 
     while to_visit and len(seen_urls) < MAX_PAGES:
         url = to_visit.pop(0)
@@ -179,13 +196,12 @@ def fetch_all_listings() -> list:
         page_html = fetch(url)
         soup = BeautifulSoup(page_html, "html.parser")
 
-        for v in parse_listing_page(page_html):
+        for v in parse_listing_page(page_html, url):
             all_vehicles[v["stock_number"]] = v
 
         next_url = find_next_page_url(soup, url)
         if next_url and next_url not in seen_urls:
             to_visit.append(next_url)
-
         for page_url in find_numbered_pagination_urls(soup, url):
             if page_url not in seen_urls and page_url not in to_visit:
                 to_visit.append(page_url)
@@ -196,9 +212,9 @@ def fetch_all_listings() -> list:
 def validate_vehicles(vehicles: list) -> None:
     if len(vehicles) == 0:
         raise SyncError(
-            "Found zero vehicles on the listing page. Either the site is "
-            "genuinely out of inventory (unlikely) or the page structure "
-            "changed and the parser in parse_listing_page() needs updating. "
+            "Found zero vehicles across all category pages. Either the "
+            "site is genuinely out of inventory (unlikely) or the page "
+            "structure changed and parse_listing_page() needs updating. "
             "Refusing to publish an empty lot."
         )
     missing_price = sum(1 for v in vehicles if not v["price"])
@@ -265,7 +281,7 @@ def write_sync_log(vehicle_count: int, status: str) -> None:
                 "last_run": datetime.datetime.utcnow().isoformat() + "Z",
                 "status": status,
                 "vehicle_count": vehicle_count,
-                "source": SOURCE_LISTING_URL,
+                "sources": SOURCE_LISTING_URLS,
             },
             f,
             indent=2,
@@ -277,13 +293,4 @@ def main():
     validate_vehicles(vehicles)
     rebuild_inventory_page(vehicles)
     write_sync_log(len(vehicles), "success")
-    print(f"Synced {len(vehicles)} vehicles successfully from {SOURCE_LISTING_URL}.")
-
-
-if __name__ == "__main__":
-    try:
-        main()
-    except SyncError as e:
-        write_sync_log(0, f"failed: {e}")
-        print(f"SYNC FAILED: {e}", file=sys.stderr)
-        sys.exit(1)
+    print(f"Synced {len(vehicles)} vehicles successfully from {len(SOURCE_LISTING_UR
