@@ -63,6 +63,7 @@ SOURCE_LISTING_URLS = [
     "https://www.inandoutautosaleswa.com/full-size-for-sale-b100043",
     "https://www.inandoutautosaleswa.com/minivans-for-sale-b100024",
     "https://www.inandoutautosaleswa.com/chassis-for-sale-b100006",
+  "https://www.inandoutautosaleswa.com/hatchbacks-for-sale-b100017",
 ]
 
 USER_AGENT = "Mozilla/5.0 (compatible; INnOutSiteSync/1.0; +https://inandoutautosaleswa.com)"
