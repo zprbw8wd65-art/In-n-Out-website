@@ -45,5 +45,9 @@ document.addEventListener('DOMContentLoaded', function(){
     [makeSel, priceSel, bodySel].forEach(function(el){
       if(el) el.addEventListener('change', applyFilters);
     });
+
+    // Run once on page load so the count reflects the real number of
+    // cards actually on the page, not a leftover placeholder number.
+    applyFilters();
   }
 });
