@@ -67,8 +67,11 @@
       <h3 style="font-family:var(--display);text-transform:uppercase;font-size:18px;margin-bottom:6px;">Send us a message</h3>
       <p style="color:#666;font-size:14px;margin-bottom:22px;">We typically reply within one business day.</p>
       <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/thank-you.html">
-        <input type="hidden" name="form-name" value="contact">
-        <p style="display:none;"><label>Don't fill this out if you're human: <input name="bot-field"></label></p>
+        <form action="https://formspree.io/f/xaenynov" method="POST">
+        <input type="hidden" name="_subject" value="New message from the website">
+        <input type="hidden" name="_next" value="https://zprbw8wd65-art.github.io/In-n-Out-website/thank-you.html">
+        <input type="text" name="_gotcha" style="display:none">
+
         <div class="form-row">
           <div><label for="fname">First name</label><input id="fname" name="first_name" type="text" required></div>
           <div><label for="lname">Last name</label><input id="lname" name="last_name" type="text" required></div>
