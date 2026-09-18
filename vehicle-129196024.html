@@ -36,7 +36,42 @@
   .vd-sidebar p{color:var(--steel-light);font-size:14px;margin-top:6px;}
   .vd-sidebar .btn{width:100%;margin-top:16px;}
   .vd-sidebar .divider{border-top:1px solid var(--line-dark);margin:20px 0;}
+  .vd-share{display:flex;gap:10px;margin-top:16px;}
+  .vd-share a{flex:1;text-align:center;padding:10px;border-radius:var(--radius-sm);border:1px solid var(--line);font-size:13px;font-family:var(--display);text-transform:uppercase;letter-spacing:0.04em;color:var(--ink);}
+  .vd-share a:hover{background:var(--concrete);}
 </style>
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Vehicle",
+  "name": "2012 RAM 1500",
+  "image": [
+    "https://cdn05.carsforsale.com/00b78f8a63327dce3edeb8b44022a87760/1024x768/2012-ram-1500-outdoorsman-4x4-4dr-crew-cab-5-5-ft-sb-pickup.jpg",
+    "https://cdn05.carsforsale.com/6c45e4bec54000d5603602182a40579f/1024x768/2012-ram-1500-outdoorsman-4x4-4dr-crew-cab-5-5-ft-sb-pickup.jpg",
+    "https://cdn05.carsforsale.com/0092d59bbc0273d5a040dd0647e7f406d5/1024x768/2012-ram-1500-outdoorsman-4x4-4dr-crew-cab-5-5-ft-sb-pickup.jpg",
+    "https://cdn05.carsforsale.com/5d0b00a748f5a29a096e6aaeb6d93a1a/1024x768/2012-ram-1500-outdoorsman-4x4-4dr-crew-cab-5-5-ft-sb-pickup.jpg",
+    "https://cdn05.carsforsale.com/00846e3ba0fb38c89a67d6c88ce12b65/1024x768/2012-ram-1500-outdoorsman-4x4-4dr-crew-cab-5-5-ft-sb-pickup.jpg"
+  ],
+  "vehicleIdentificationNumber": "Send Email",
+  "mileageFromOdometer": {
+    "@type": "QuantitativeValue",
+    "value": "149037",
+    "unitCode": "SMI"
+  },
+  "offers": {
+    "@type": "Offer",
+    "price": "11999",
+    "priceCurrency": "USD",
+    "availability": "http://schema.org/InStock",
+    "seller": {
+      "@type": "AutoDealer",
+      "name": "IN-n-OUT Auto Sales",
+      "telephone": "(253) 446-6533",
+      "address": "7602 River Road East, Puyallup, WA 98371"
+    }
+  }
+}
+</script>
 </head>
 <body>
 
@@ -177,9 +212,14 @@ A dealer documentary service fee of up to $200 may be added to the sale price or
         <div class="price">$11,999</div>
         <p>2012 RAM 1500 &middot; 149,037 mi</p>
         <a class="btn btn-amber" href="tel:+12534466533">Call (253) 446-6533</a>
-        <a class="btn btn-outline" href="contact.html">Ask a Question</a>
+        <a class="btn btn-outline" href="contact.html?vehicle=2012%20RAM%201500">Ask a Question</a>
         <div class="divider"></div>
         <p style="font-size:13px;">Interested in financing? <a href="finance.html" style="color:var(--amber);text-decoration:underline;">Get pre-qualified</a> before you visit.</p>
+        <div class="vd-share">
+          <a href="#" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(window.location.href),'_blank');return false;">Facebook</a>
+          <a href="#" onclick="window.open('https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)+'&text='+encodeURIComponent(document.title),'_blank');return false;">Twitter</a>
+          <a href="#" onclick="navigator.clipboard.writeText(window.location.href);this.textContent='Copied!';return false;">Copy Link</a>
+        </div>
       </aside>
     </div>
   </div>

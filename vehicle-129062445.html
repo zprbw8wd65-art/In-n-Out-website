@@ -36,7 +36,42 @@
   .vd-sidebar p{color:var(--steel-light);font-size:14px;margin-top:6px;}
   .vd-sidebar .btn{width:100%;margin-top:16px;}
   .vd-sidebar .divider{border-top:1px solid var(--line-dark);margin:20px 0;}
+  .vd-share{display:flex;gap:10px;margin-top:16px;}
+  .vd-share a{flex:1;text-align:center;padding:10px;border-radius:var(--radius-sm);border:1px solid var(--line);font-size:13px;font-family:var(--display);text-transform:uppercase;letter-spacing:0.04em;color:var(--ink);}
+  .vd-share a:hover{background:var(--concrete);}
 </style>
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Vehicle",
+  "name": "2015 Hyundai Tucson",
+  "image": [
+    "https://cdn05.carsforsale.com/271d58bb2f5ddb100e87c4601f5d7647/1024x768/2015-hyundai-tucson-gls-4dr-suv.jpg",
+    "https://cdn05.carsforsale.com/00892126dec39e9c94cfcf1c8419c970c9/1024x768/2015-hyundai-tucson-gls-4dr-suv.jpg",
+    "https://cdn05.carsforsale.com/6339502e4501fbcfe767d9086d7580c5/1024x768/2015-hyundai-tucson-gls-4dr-suv.jpg",
+    "https://cdn05.carsforsale.com/68fe8649127080ff48ada480c7791784/1024x768/2015-hyundai-tucson-gls-4dr-suv.jpg",
+    "https://cdn05.carsforsale.com/5beacc9fcdcebfc3d5997aa0980873ce/1024x768/2015-hyundai-tucson-gls-4dr-suv.jpg"
+  ],
+  "vehicleIdentificationNumber": "Send Email",
+  "mileageFromOdometer": {
+    "@type": "QuantitativeValue",
+    "value": "73126",
+    "unitCode": "SMI"
+  },
+  "offers": {
+    "@type": "Offer",
+    "price": "10999",
+    "priceCurrency": "USD",
+    "availability": "http://schema.org/InStock",
+    "seller": {
+      "@type": "AutoDealer",
+      "name": "IN-n-OUT Auto Sales",
+      "telephone": "(253) 446-6533",
+      "address": "7602 River Road East, Puyallup, WA 98371"
+    }
+  }
+}
+</script>
 </head>
 <body>
 
@@ -155,9 +190,14 @@ A dealer documentary service fee of up to $200 may be added to the sale price or
         <div class="price">$10,999</div>
         <p>2015 Hyundai Tucson &middot; 73,126 mi</p>
         <a class="btn btn-amber" href="tel:+12534466533">Call (253) 446-6533</a>
-        <a class="btn btn-outline" href="contact.html">Ask a Question</a>
+        <a class="btn btn-outline" href="contact.html?vehicle=2015%20Hyundai%20Tucson">Ask a Question</a>
         <div class="divider"></div>
         <p style="font-size:13px;">Interested in financing? <a href="finance.html" style="color:var(--amber);text-decoration:underline;">Get pre-qualified</a> before you visit.</p>
+        <div class="vd-share">
+          <a href="#" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(window.location.href),'_blank');return false;">Facebook</a>
+          <a href="#" onclick="window.open('https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)+'&text='+encodeURIComponent(document.title),'_blank');return false;">Twitter</a>
+          <a href="#" onclick="navigator.clipboard.writeText(window.location.href);this.textContent='Copied!';return false;">Copy Link</a>
+        </div>
       </aside>
     </div>
   </div>

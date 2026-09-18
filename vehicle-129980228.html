@@ -36,7 +36,42 @@
   .vd-sidebar p{color:var(--steel-light);font-size:14px;margin-top:6px;}
   .vd-sidebar .btn{width:100%;margin-top:16px;}
   .vd-sidebar .divider{border-top:1px solid var(--line-dark);margin:20px 0;}
+  .vd-share{display:flex;gap:10px;margin-top:16px;}
+  .vd-share a{flex:1;text-align:center;padding:10px;border-radius:var(--radius-sm);border:1px solid var(--line);font-size:13px;font-family:var(--display);text-transform:uppercase;letter-spacing:0.04em;color:var(--ink);}
+  .vd-share a:hover{background:var(--concrete);}
 </style>
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Vehicle",
+  "name": "2013 Lexus CT 200h",
+  "image": [
+    "https://cdn05.carsforsale.com/00f9101266a06120accb697e3f2fd7eea9/1024x768/2013-lexus-ct-200h-base-4dr-hatchback.jpg",
+    "https://cdn05.carsforsale.com/009f3266a30ccda4389d4a88dab4fcbfa6/1024x768/2013-lexus-ct-200h-base-4dr-hatchback.jpg",
+    "https://cdn05.carsforsale.com/69485565234134753dd8ad4621436711/1024x768/2013-lexus-ct-200h-base-4dr-hatchback.jpg",
+    "https://cdn05.carsforsale.com/2246337b2041e95fcba423e3b624520f/1024x768/2013-lexus-ct-200h-base-4dr-hatchback.jpg",
+    "https://cdn05.carsforsale.com/009cd361277ec9d5ef751953ad663dde2b/1024x768/2013-lexus-ct-200h-base-4dr-hatchback.jpg"
+  ],
+  "vehicleIdentificationNumber": "Send Email",
+  "mileageFromOdometer": {
+    "@type": "QuantitativeValue",
+    "value": "100743",
+    "unitCode": "SMI"
+  },
+  "offers": {
+    "@type": "Offer",
+    "price": "13999",
+    "priceCurrency": "USD",
+    "availability": "http://schema.org/InStock",
+    "seller": {
+      "@type": "AutoDealer",
+      "name": "IN-n-OUT Auto Sales",
+      "telephone": "(253) 446-6533",
+      "address": "7602 River Road East, Puyallup, WA 98371"
+    }
+  }
+}
+</script>
 </head>
 <body>
 
@@ -167,9 +202,14 @@ A dealer documentary service fee of up to $200 may be added to the sale price or
         <div class="price">$13,999</div>
         <p>2013 Lexus CT 200h &middot; 100,743 mi</p>
         <a class="btn btn-amber" href="tel:+12534466533">Call (253) 446-6533</a>
-        <a class="btn btn-outline" href="contact.html">Ask a Question</a>
+        <a class="btn btn-outline" href="contact.html?vehicle=2013%20Lexus%20CT%20200h">Ask a Question</a>
         <div class="divider"></div>
         <p style="font-size:13px;">Interested in financing? <a href="finance.html" style="color:var(--amber);text-decoration:underline;">Get pre-qualified</a> before you visit.</p>
+        <div class="vd-share">
+          <a href="#" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(window.location.href),'_blank');return false;">Facebook</a>
+          <a href="#" onclick="window.open('https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)+'&text='+encodeURIComponent(document.title),'_blank');return false;">Twitter</a>
+          <a href="#" onclick="navigator.clipboard.writeText(window.location.href);this.textContent='Copied!';return false;">Copy Link</a>
+        </div>
       </aside>
     </div>
   </div>

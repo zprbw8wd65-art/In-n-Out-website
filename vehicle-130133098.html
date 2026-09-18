@@ -36,7 +36,42 @@
   .vd-sidebar p{color:var(--steel-light);font-size:14px;margin-top:6px;}
   .vd-sidebar .btn{width:100%;margin-top:16px;}
   .vd-sidebar .divider{border-top:1px solid var(--line-dark);margin:20px 0;}
+  .vd-share{display:flex;gap:10px;margin-top:16px;}
+  .vd-share a{flex:1;text-align:center;padding:10px;border-radius:var(--radius-sm);border:1px solid var(--line);font-size:13px;font-family:var(--display);text-transform:uppercase;letter-spacing:0.04em;color:var(--ink);}
+  .vd-share a:hover{background:var(--concrete);}
 </style>
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Vehicle",
+  "name": "2016 Volkswagen Tiguan",
+  "image": [
+    "https://cdn05.carsforsale.com/4670018f3bee4ea1a49c2612ed1ccc23/1024x768/2016-volkswagen-tiguan-2-0t-se-4motion-sport-utility-4d.jpg",
+    "https://cdn05.carsforsale.com/71d5a6e55788bb7a8408a2b1e63dd593/1024x768/2016-volkswagen-tiguan-2-0t-se-4motion-sport-utility-4d.jpg",
+    "https://cdn05.carsforsale.com/00b099fff98b6469ae880f024f5a26c652/1024x768/2016-volkswagen-tiguan-2-0t-se-4motion-sport-utility-4d.jpg",
+    "https://cdn05.carsforsale.com/70d5e3e488081d6883fced8e582313c7/1024x768/2016-volkswagen-tiguan-2-0t-se-4motion-sport-utility-4d.jpg",
+    "https://cdn05.carsforsale.com/0fc7fe6068d8994c9511d48a39d09176/1024x768/2016-volkswagen-tiguan-2-0t-se-4motion-sport-utility-4d.jpg"
+  ],
+  "vehicleIdentificationNumber": "Send Email",
+  "mileageFromOdometer": {
+    "@type": "QuantitativeValue",
+    "value": "100529",
+    "unitCode": "SMI"
+  },
+  "offers": {
+    "@type": "Offer",
+    "price": "9799",
+    "priceCurrency": "USD",
+    "availability": "http://schema.org/InStock",
+    "seller": {
+      "@type": "AutoDealer",
+      "name": "IN-n-OUT Auto Sales",
+      "telephone": "(253) 446-6533",
+      "address": "7602 River Road East, Puyallup, WA 98371"
+    }
+  }
+}
+</script>
 </head>
 <body>
 
@@ -157,9 +192,14 @@
         <div class="price">$9,799</div>
         <p>2016 Volkswagen Tiguan &middot; 100,529 mi</p>
         <a class="btn btn-amber" href="tel:+12534466533">Call (253) 446-6533</a>
-        <a class="btn btn-outline" href="contact.html">Ask a Question</a>
+        <a class="btn btn-outline" href="contact.html?vehicle=2016%20Volkswagen%20Tiguan">Ask a Question</a>
         <div class="divider"></div>
         <p style="font-size:13px;">Interested in financing? <a href="finance.html" style="color:var(--amber);text-decoration:underline;">Get pre-qualified</a> before you visit.</p>
+        <div class="vd-share">
+          <a href="#" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(window.location.href),'_blank');return false;">Facebook</a>
+          <a href="#" onclick="window.open('https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)+'&text='+encodeURIComponent(document.title),'_blank');return false;">Twitter</a>
+          <a href="#" onclick="navigator.clipboard.writeText(window.location.href);this.textContent='Copied!';return false;">Copy Link</a>
+        </div>
       </aside>
     </div>
   </div>
