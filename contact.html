@@ -134,5 +134,16 @@
 </footer>
 
 <script src="script.js"></script>
+  <script>
+  // Pre-fill the vehicle field if arriving from a specific vehicle's page
+  (function(){
+    var params = new URLSearchParams(window.location.search);
+    var vehicle = params.get('vehicle');
+    if (vehicle) {
+      var field = document.getElementById('vehicle');
+      if (field) field.value = vehicle;
+    }
+  })();
+</script>
 </body>
 </html>
